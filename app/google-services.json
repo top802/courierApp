@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "975470270102",
+    "firebase_url": "https://deliverty-7b5a8.firebaseio.com",
+    "project_id": "deliverty-7b5a8",
+    "storage_bucket": "deliverty-7b5a8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:975470270102:android:78246e3fc5b728e5",
+        "android_client_info": {
+          "package_name": "wisehands.me.deliverty"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "975470270102-pilljhev3reuvap595lk928kpnffnp7p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "wisehands.me.deliverty",
+            "certificate_hash": "3c1725fcb3ca1e9909bba71f3c900d9ecdf4f0d0"
+          }
+        },
+        {
+          "client_id": "975470270102-n9n1ts0g0dn6idqtn12js4va9cqrq7lm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmcV4ltGqbm_krTyDUJo-KbsXPwwgAnx4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "975470270102-n9n1ts0g0dn6idqtn12js4va9cqrq7lm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
