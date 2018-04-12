@@ -34,88 +34,93 @@ import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
-
-    private static final String TAG = "JSAGoogleSignIn";
+public class MainActivity extends AppCompatActivity {
+    //a constant for detecting the login intent result
     private static final int RC_SIGN_IN = 234;
 
+    //Tag for the logs optional
+    private static final String TAG = "simplifiedcoding";
 
-    private GoogleSignInClient mGoogleSignInClient;
-    private FirebaseAuth mAuth;
-    private GoogleApiClient mGoogleApiClient;
-    private TextView txtDetail;
-    private TextView txtStatus;
+    //creating a GoogleSignInClient object
+    GoogleSignInClient mGoogleSignInClient;
+
+    //And also a Firebase Auth object
+    FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        txtStatus = (TextView) findViewById(R.id.txtStatus);
-        txtDetail = (TextView) findViewById(R.id.txtDetail);
-        findViewById(R.id.bn_logout).setOnClickListener(this);
-        findViewById(R.id.bn_login).setOnClickListener(this);
+        //first we intialized the FirebaseAuth object
+        mAuth = FirebaseAuth.getInstance();
 
-
+        //Then we need a GoogleSignInOptions object
+        //And we need to build it as below
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.server_cliend_id))
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
 
+        //Then we will get the GoogleSignInClient object from GoogleSignIn class
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
+        //Now we will attach a click listener to the sign_in_button
+        //and inside onClick() method we are calling the signIn() method that will open
+        //google sign in intent
+        findViewById(R.id.bn_login).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signIn();
+            }
+        });
 
-        mAuth = FirebaseAuth.getInstance();
+        findViewById(R.id.bn_profile).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getProfile();
+            }
+        });
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        updateUI(currentUser);
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.e(TAG, "onConnectionFailed():" + connectionResult);
-        Toast.makeText(getApplicationContext(), "Google Play Services error.", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onClick(View v) {
-        int i = v.getId();
-        if (i == R.id.bn_login) {
-            signIn();
-        } else if (i == R.id.bn_logout) {
-           // signOut();
+    private void getProfile() {
+        if (mAuth.getCurrentUser() != null) {
+            finish();
+            startActivity(new Intent(this, ProfileActivity.class));
         }
     }
 
-    private void signIn() {
-        Intent intent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(intent, RC_SIGN_IN);
-    }
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//
+//        //if the user is already signed in
+//        //we will close this activity
+//        //and take the user to profile activity
+//        if (mAuth.getCurrentUser() != null) {
+//            finish();
+//            startActivity(new Intent(this, ProfileActivity.class));
+//        }
+//    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        //if the requestCode is the Google Sign In code that we defined at starting
         if (requestCode == RC_SIGN_IN) {
+
+            //Getting the GoogleSignIn Task
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
-                // Google Sign In was successful, authenticate with Firebase
+                //Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
+
+                //authenticating with firebase
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
-                // Google Sign In failed, update UI appropriately
                 Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                // ...
             }
         }
     }
@@ -123,52 +128,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
+        //getting the auth credential
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+
+        //Now using firebase we are signing in the user here
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+
                             Toast.makeText(MainActivity.this, "User Signed In", Toast.LENGTH_SHORT).show();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(MainActivity.this, "Authentication failed", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+
                         }
 
-
+                        // ...
                     }
                 });
     }
 
 
+    //this method is called on click
+    private void signIn() {
+        //getting the google signin intent
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
 
-    private void updateUI(final FirebaseUser user) {
-        if (user != null) {
-            user.getIdToken(true)
-                    .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
-                        public void onComplete(@NonNull Task<GetTokenResult> task) {
-                            if (task.isSuccessful()) {
-                                String idToken = task.getResult().getToken();
-                                // Send token to your backend via HTTPS
-                                String txt = "Google User email: " + user.getEmail() + idToken;
-                                txtStatus.setText(txt);
-                            } else {
-                                // Handle error -> task.getException();
-                            }
-                        }
-                    });
-            txtDetail.setText("Firebase User ID: " + user.getUid());
-
-        } else {
-            txtStatus.setText("Signed Out");
-            txtDetail.setText(null);
-
-        }
+        //starting the activity for result
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
-
-
 }
