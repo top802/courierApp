@@ -24,39 +24,42 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginLeft="160dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="8dp"
         android:text="TextView"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtName" />
 
     <Button
-        android:id="@+id/bn_logout"
-        android:layout_width="match_parent"
+        android:id="@+id/bn_accept"
+        android:layout_width="214dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:text="LogOut Coogle Account"
-        app:layout_constraintTop_toTopOf="@+id/txtEmail" />
-
-    <TextView
-        android:id="@+id/txtToken"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
-        android:text="TextView"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="80dp"
+        android:text="Accept delivery"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bn_token" />
+        app:layout_constraintTop_toBottomOf="@+id/txtOrder" />
 
     <Button
-        android:id="@+id/bn_token"
-        android:layout_width="wrap_content"
+        android:id="@+id/bn_cancel"
+        android:layout_width="213dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Token"
+        android:layout_marginTop="12dp"
+        android:text="Cancel delivery"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bn_logout" />
+        app:layout_constraintTop_toBottomOf="@+id/bn_accept" />
+
+    <TextView
+        android:id="@+id/txtOrder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="84dp"
+        android:text="TextView"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtEmail" />
+
 </android.support.constraint.ConstraintLayout>

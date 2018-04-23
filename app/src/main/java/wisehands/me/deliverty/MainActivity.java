@@ -75,33 +75,33 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.bn_profile).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getProfile();
-            }
-        });
+//        findViewById(R.id.bn_profile).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                    getProfile();
+//            }
+//        });
     }
 
-    private void getProfile() {
-        if (mAuth.getCurrentUser() != null) {
-            finish();
-            startActivity(new Intent(this, ProfileActivity.class));
-        }
-    }
-
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//
-//        //if the user is already signed in
-//        //we will close this activity
-//        //and take the user to profile activity
+//    private void getProfile() {
 //        if (mAuth.getCurrentUser() != null) {
 //            finish();
 //            startActivity(new Intent(this, ProfileActivity.class));
 //        }
 //    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        //if the user is already signed in
+        //we will close this activity
+        //and take the user to profile activity
+        if (mAuth.getCurrentUser() != null) {
+            finish();
+            startActivity(new Intent(this, ProfileActivity.class));
+        }
+    }
 
 
     @Override
