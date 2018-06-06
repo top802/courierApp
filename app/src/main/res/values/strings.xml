@@ -2,4 +2,6 @@
     <string name="app_name">Deliverty</string>
     <string name="server_cliend_id">975470270102-pilljhev3reuvap595lk928kpnffnp7p.apps.googleusercontent.com</string>
     <string name="title_activity_profile">ProfileActivity</string>
+    <string name="provider_gps">GPS</string>
+    <string name="provider_network">Network</string>
 </resources>

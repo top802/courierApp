@@ -11,10 +11,12 @@
         android:id="@+id/txtName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="160dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="40dp"
         android:layout_marginTop="28dp"
-        android:text="TextView"
+        android:text="Name"
+        app:layout_constraintEnd_toStartOf="@+id/gpgstatus"
+        app:layout_constraintHorizontal_bias="0.042"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -23,10 +25,13 @@
         android:id="@+id/txtEmail"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginLeft="160dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="40dp"
         android:layout_marginTop="8dp"
-        android:text="TextView"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:text="Email"
+        app:layout_constraintEnd_toStartOf="@+id/netstatus"
+        app:layout_constraintHorizontal_bias="0.041"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtName" />
 
     <Button
@@ -37,7 +42,7 @@
         android:text="Accept delivery"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtOrder" />
+        app:layout_constraintTop_toBottomOf="@+id/mylocation" />
 
     <Button
         android:id="@+id/bn_cancel"
@@ -53,13 +58,44 @@
         app:layout_constraintTop_toBottomOf="@+id/bn_accept" />
 
     <TextView
-        android:id="@+id/txtOrder"
+        android:id="@+id/mylocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="84dp"
-        android:text="TextView"
+        android:text="location"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtEmail" />
+
+    <TextView
+        android:id="@+id/gpgstatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="40dp"
+        android:layout_marginTop="28dp"
+        android:text="GSPstatus"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/netstatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="40dp"
+        android:layout_marginTop="8dp"
+        android:text="NETstatus"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gpgstatus" />
+
+    <Button
+        android:id="@+id/locSetting"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginTop="20dp"
+        android:text="Location Setting"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/netstatus" />
 
 </android.support.constraint.ConstraintLayout>
