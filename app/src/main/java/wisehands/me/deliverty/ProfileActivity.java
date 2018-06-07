@@ -1,15 +1,17 @@
 package wisehands.me.deliverty;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -21,10 +23,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,13 +33,16 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
 
+    public static final String API_HOST = "http://192.168.1.88:8080";
+    private static String firebaseToken;
+
     Button locsetting;
-    TextView mygpgstatus, mynetstatus, mylocation;
+    private TextView urls, mygpgstatus, mynetstatus, mylocation;
     private LocationManager locationManager;
     StringBuilder sbNet = new StringBuilder();
     private ProfileActivity context = this;
 
-    private TextView txtName, txtEmail;
+    private TextView txtName, txtEmail,vToken;
     private FirebaseAuth mAuth;
 
     private final String TOPIC = "JavaSampleApproach";
@@ -51,6 +52,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        urls = (TextView) findViewById(R.id.url);
         mylocation = (TextView) findViewById(R.id.mylocation);
         mynetstatus = (TextView) findViewById(R.id.netstatus);
         mygpgstatus = (TextView) findViewById(R.id.gpgstatus);
@@ -61,6 +63,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
+
+        vToken = (TextView) findViewById(R.id.vToken);
 
         txtName = findViewById(R.id.txtName);
         txtEmail = findViewById(R.id.txtEmail);
@@ -78,13 +82,14 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
                     public void onComplete(@NonNull Task<GetTokenResult> task) {
                         if (task.isSuccessful()) {
-                            String idToken = task.getResult().getToken();
-//                            txtToken.setText(idToken);
+                            final String idToken = task.getResult().getToken();
+                            self.firebaseToken = idToken;
+                            vToken.setText("idToken received");
                             // Send token to your backend via HTTPS
-
+                            // volley POST
                             // Instantiate the RequestQueue.
                             RequestQueue queue = Volley.newRequestQueue(self);
-                            String url ="http://192.168.0.15:8080/authenticate?token=" + idToken;
+                            String url = API_HOST +"/authenticate?token=" + idToken;
 
                             // Request a string response from the provided URL.
                             StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -93,6 +98,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                                         public void onResponse(String response) {
                                             // Display the first 500 characters of the response string.
                                             //txtToken.setText("Response is: "+ response.substring(0,500));
+
                                             Toast.makeText(ProfileActivity.this,"registration is completed.",
                                                     Toast.LENGTH_SHORT).show();
                                         }
@@ -127,8 +133,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 cancelOrder();
             break;
             case R.id.locSetting:
-                startActivity(new Intent(
-                        android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
             break;
         }
     }
@@ -211,7 +216,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         }
     };
 
-    private void showLocation(Location location) {
+    private void showLocation(final Location location) {
         if (location == null)
             return;
         if (location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
@@ -221,6 +226,55 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 LocationManager.NETWORK_PROVIDER)) {
             mylocation.setText(formatLocation(location));
         }
+
+        FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
+        final Location locationVar = location;
+
+        final Context self=this;
+        mUser.getIdToken(true)
+                .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
+                    public void onComplete(@NonNull Task<GetTokenResult> task) {
+                        if (task.isSuccessful()) {
+                            String idToken = task.getResult().getToken();
+
+                            double lat = locationVar.getLatitude();
+                            double lon = locationVar.getLongitude();
+                            String urlPath = "update-courier-location";
+                            String params = String.format("token=%s&latitude=%f&longitude=%f", idToken, lat, lon);
+//                            String params = String.format("latitude=%f&longtitude=%f", lat, lon);
+                            String updateCourierLocation = String.format("%s/%s?%s", API_HOST, urlPath, params);
+
+                            urls.setText(lat+" "+lon);
+                            RequestQueue queue = Volley.newRequestQueue(self);
+                            StringRequest postRequest = new StringRequest(Request.Method.POST, updateCourierLocation,
+                                    new Response.Listener<String>()
+                                    {
+                                        @Override
+                                        public void onResponse(String response) {
+                                            // response
+                                            Log.d("Response", response);
+                                        }
+                                    },
+                                    new Response.ErrorListener()
+                                    {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            // error
+                                            Log.d("Error.Response", error.getMessage());
+                                        }
+                                    }
+                            );
+                            queue.add(postRequest);
+
+                        } else {
+                            Toast.makeText(ProfileActivity.this, "Token with URL no send",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+
+
     }
 
     private String formatLocation(Location location) {
@@ -239,6 +293,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 + locationManager
                 .isProviderEnabled(LocationManager.NETWORK_PROVIDER));
     }
+
+
 
 }
 
