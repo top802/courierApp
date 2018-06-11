@@ -1,6 +1,7 @@
 package wisehands.me.deliverty;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -33,7 +34,9 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
 
+//    public static final String API_HOST = "http://192.168.1.5:8080";
     public static final String API_HOST = "http://192.168.1.88:8080";
+//    public static final String API_HOST = "http://192.168.1.5:8080";
     private static String firebaseToken;
 
     Button locsetting;
@@ -163,9 +166,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             return;
         }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                1000 * 10, 10, locationListener);
+                1000 * 5, 1, locationListener);
         locationManager.requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER, 1000 * 1, 10,
+                LocationManager.NETWORK_PROVIDER, 1000 * 5, 1,
                 locationListener);
         checkEnabled();
     }
@@ -239,9 +242,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
                             double lat = locationVar.getLatitude();
                             double lon = locationVar.getLongitude();
+
                             String urlPath = "update-courier-location";
+                            @SuppressLint("DefaultLocale")
                             String params = String.format("token=%s&latitude=%f&longitude=%f", idToken, lat, lon);
-//                            String params = String.format("latitude=%f&longtitude=%f", lat, lon);
                             String updateCourierLocation = String.format("%s/%s?%s", API_HOST, urlPath, params);
 
                             urls.setText(lat+" "+lon);
