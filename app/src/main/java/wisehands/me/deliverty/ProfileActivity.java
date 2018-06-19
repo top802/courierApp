@@ -55,6 +55,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+
+
+
         urls = (TextView) findViewById(R.id.url);
         mylocation = (TextView) findViewById(R.id.mylocation);
         mynetstatus = (TextView) findViewById(R.id.netstatus);
@@ -85,9 +88,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
                     public void onComplete(@NonNull Task<GetTokenResult> task) {
                         if (task.isSuccessful()) {
+                            startService(new Intent(self, ServiceGPS.class));
+
                             final String idToken = task.getResult().getToken();
                             self.firebaseToken = idToken;
                             vToken.setText("idToken received");
+                            //
+                            //
                             // Send token to your backend via HTTPS
                             // volley POST
                             // Instantiate the RequestQueue.
@@ -147,10 +154,51 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void cancelOrder() {
+        sendRequestToServer();
+
         Toast.makeText(ProfileActivity.this, "You are canceled delivery", Toast.LENGTH_SHORT).show();
     }
 
-    // start get location
+    private void sendRequestToServer() {
+//        Toast.makeText(ServiceGPS.this, "sendRequestToServer",
+//                Toast.LENGTH_SHORT).show();
+
+        double latitude = 16.20;
+        double longitude = 4.20;
+
+        String api_host = "http://192.168.1.88:8080";
+        String urlPath = "update-courier";
+        @SuppressLint("DefaultLocale") String params = String.format("latitude=%f&longitude=%f", latitude, longitude);
+        String strURL = String.format("%s/%s?%s", api_host, urlPath, params);
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest postRequest = new StringRequest(Request.Method.POST, strURL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        Toast.makeText(ProfileActivity.this, "RequestToServer",
+                                Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ProfileActivity.this, response,
+                                Toast.LENGTH_SHORT).show();
+                        Log.d("Response", "RESPONSE" + response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // error
+                        Toast.makeText(ProfileActivity.this, "FAILRequestToServer",
+                                Toast.LENGTH_SHORT).show();
+                        Log.d("Error.Response", error.getMessage());
+                    }
+                }
+        );
+        queue.add(postRequest);
+    }
+
+
+        // start get location
 
     @Override
     protected void onResume() {
@@ -166,7 +214,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             return;
         }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                1000 * 5, 1, locationListener);
+                1000, 1, locationListener);
         locationManager.requestLocationUpdates(
                 LocationManager.NETWORK_PROVIDER, 1000 * 5, 1,
                 locationListener);
@@ -233,7 +281,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
         final Location locationVar = location;
 
-        final Context self=this;
+        final Context self = this;
         mUser.getIdToken(true)
                 .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
                     public void onComplete(@NonNull Task<GetTokenResult> task) {
