@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -15,7 +16,7 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="28dp"
         android:text="Name"
-        app:layout_constraintEnd_toStartOf="@+id/gpgstatus"
+        app:layout_constraintEnd_toStartOf="@+id/gpsstatus"
         app:layout_constraintHorizontal_bias="0.042"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,6 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="80dp"
         android:text="Accept delivery"
+        android:visibility="invisible"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mylocation" />
@@ -50,6 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:text="Cancel delivery"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -68,12 +71,12 @@
         app:layout_constraintTop_toBottomOf="@+id/txtEmail" />
 
     <TextView
-        android:id="@+id/gpgstatus"
+        android:id="@+id/gpsstatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="40dp"
         android:layout_marginTop="28dp"
-        android:text="GSPstatus"
+        android:text="GPSstatus"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -85,7 +88,7 @@
         android:layout_marginTop="8dp"
         android:text="NETstatus"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/gpgstatus" />
+        app:layout_constraintTop_toBottomOf="@+id/gpsstatus" />
 
     <Button
         android:id="@+id/locSetting"
@@ -102,11 +105,24 @@
         android:id="@+id/url"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="52dp"
-        android:layout_marginTop="8dp"
-        android:text="url"
+        android:layout_marginTop="16dp"
+        android:text="test rsponce JWT"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mylocation" />
+
+    <TextView
+        android:id="@+id/url2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="test JWT change varible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/url" />
 
     <TextView
         android:id="@+id/vToken"

@@ -14,7 +14,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,16 +33,17 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
 
-//    public static final String API_HOST = "http://192.168.1.5:8080";
+    private static final String TAG = "MY LOG!!!!!";
+
+//    public static final String API_HOST = "http://192.168.1.3:8080";
     public static final String API_HOST = "http://192.168.1.88:8080";
-//    public static final String API_HOST = "http://192.168.1.5:8080";
+//  public static final String API_HOST = "http://192.168.0.13:8080";
     private static String firebaseToken;
 
-    Button locsetting;
-    private TextView urls, mygpgstatus, mynetstatus, mylocation;
+    private TextView testtest, testtest2, gpsstatus, mynetstatus, mylocation;
     private LocationManager locationManager;
-    StringBuilder sbNet = new StringBuilder();
     private ProfileActivity context = this;
+    public static String jwttoken;
 
     private TextView txtName, txtEmail,vToken;
     private FirebaseAuth mAuth;
@@ -55,14 +55,16 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-
-
-
-        urls = (TextView) findViewById(R.id.url);
+        testtest = (TextView) findViewById(R.id.url);
+        testtest2 = (TextView) findViewById(R.id.url2);
         mylocation = (TextView) findViewById(R.id.mylocation);
         mynetstatus = (TextView) findViewById(R.id.netstatus);
-        mygpgstatus = (TextView) findViewById(R.id.gpgstatus);
+        gpsstatus = (TextView) findViewById(R.id.gpsstatus);
+        vToken = (TextView) findViewById(R.id.vToken);
+        txtName = (TextView) findViewById(R.id.txtName);
+        txtEmail = (TextView) findViewById(R.id.txtEmail);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
         findViewById(R.id.locSetting).setOnClickListener(this);
 
         FirebaseMessaging.getInstance().subscribeToTopic(TOPIC);
@@ -70,47 +72,40 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
 
-        vToken = (TextView) findViewById(R.id.vToken);
-
-        txtName = findViewById(R.id.txtName);
-        txtEmail = findViewById(R.id.txtEmail);
-
         txtName.setText(user.getDisplayName());
         txtEmail.setText(user.getEmail());
 
-        findViewById(R.id.bn_accept).setOnClickListener(this);
-        findViewById(R.id.bn_cancel).setOnClickListener(this);
+//        findViewById(R.id.bn_accept).setOnClickListener(this);
+        findViewById(R.id.bn_accept).setVisibility(View.GONE);
+        findViewById(R.id.bn_cancel).setVisibility(View.GONE);
+//        findViewById(R.id.bn_cancel).setOnClickListener(this);
 
+//      create Token, JWT
         FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
-
-        final ProfileActivity  self = this;
+        Log.i(TAG, "1 step");
         mUser.getIdToken(true)
                 .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
                     public void onComplete(@NonNull Task<GetTokenResult> task) {
                         if (task.isSuccessful()) {
-                            startService(new Intent(self, ServiceGPS.class));
+                            startService(new Intent(context, ServiceGPS.class));
 
-                            final String idToken = task.getResult().getToken();
-                            self.firebaseToken = idToken;
-                            vToken.setText("idToken received");
-                            //
-                            //
-                            // Send token to your backend via HTTPS
-                            // volley POST
-                            // Instantiate the RequestQueue.
-                            RequestQueue queue = Volley.newRequestQueue(self);
-                            String url = API_HOST +"/authenticate?token=" + idToken;
-
-                            // Request a string response from the provided URL.
+                            final String fbToken = task.getResult().getToken();
+                            context.firebaseToken = fbToken;
+                            vToken.setText("firebaseToken received");
+//                            send Token and create Volley POST
+                            RequestQueue queue = Volley.newRequestQueue(context);
+                            String url = API_HOST +"/authenticate?token=" + fbToken;
+//                            Request a string response from the provided URL.
                             StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                                     new Response.Listener<String>() {
                                         @Override
                                         public void onResponse(String response) {
-                                            // Display the first 500 characters of the response string.
-                                            //txtToken.setText("Response is: "+ response.substring(0,500));
-
-                                            Toast.makeText(ProfileActivity.this,"registration is completed.",
+                                            jwttoken = response;
+                                            testtest.setText("jwtoken received:  " + jwttoken);
+                                            Toast.makeText(ProfileActivity.this, "registration is complete.",
                                                     Toast.LENGTH_SHORT).show();
+                                            Log.i(TAG, "2 step");
+                                            context.onJWTTokenReceived();
                                         }
                                     }, new Response.ErrorListener() {
                                 @Override
@@ -131,6 +126,23 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         }
                     }
                 });
+
+//         decode JWT
+//        JWT jwt = new JWT(jwstoken);
+//        String subject = jwt.getSubject();
+//        testtest.setText(subject);
+//        try {
+//            testtest2.setText("test JWT change varible: " + jwtok);
+//            Toast.makeText(ProfileActivity.this, jwtok, Toast.LENGTH_SHORT).show();
+//        } catch (Exception e){
+//            testtest.setText("jws token not create in global varible");
+//        }
+
+    }
+
+    public void onJWTTokenReceived(){
+        testtest2.setText("test JWT change varible: " + jwttoken);
+        Log.i(TAG, "3 step");
     }
 
     @Override
@@ -148,9 +160,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    // work with jwt
+
     private void acceptOrder() {
-        Intent intent = new Intent(this, OrderActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent(this, OrderActivity.class);
+//        startActivity(intent);
     }
 
     private void cancelOrder() {
@@ -159,6 +173,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         Toast.makeText(ProfileActivity.this, "You are canceled delivery", Toast.LENGTH_SHORT).show();
     }
 
+    //Request.Method.POST
     private void sendRequestToServer() {
 //        Toast.makeText(ServiceGPS.this, "sendRequestToServer",
 //                Toast.LENGTH_SHORT).show();
@@ -221,7 +236,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         checkEnabled();
     }
 
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -259,7 +273,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
             if (provider.equals(LocationManager.GPS_PROVIDER)) {
-                mygpgstatus.setText("GPS status: " + String.valueOf(status));
+                gpsstatus.setText("GPS status: " + String.valueOf(status));
             } else
             if (provider.equals(LocationManager.NETWORK_PROVIDER)) {
                 mynetstatus.setText("NET status: " + String.valueOf(status));
@@ -296,7 +310,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                             String params = String.format("token=%s&latitude=%f&longitude=%f", idToken, lat, lon);
                             String updateCourierLocation = String.format("%s/%s?%s", API_HOST, urlPath, params);
 
-                            urls.setText(lat+" "+lon);
+//                            urls.setText(lat+" "+lon);
                             RequestQueue queue = Volley.newRequestQueue(self);
                             StringRequest postRequest = new StringRequest(Request.Method.POST, updateCourierLocation,
                                     new Response.Listener<String>()
@@ -338,7 +352,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void checkEnabled() {
-        mygpgstatus.setText("GPS enabled: "
+        gpsstatus.setText("GPS enabled: "
                 + locationManager
                 .isProviderEnabled(LocationManager.GPS_PROVIDER));
         mynetstatus.setText("NET enabled: "

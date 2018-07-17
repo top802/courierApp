@@ -21,7 +21,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ProfileActivity" />
-        <activity android:name=".OrderActivity" />
+        <activity android:name=".OrderFragment" />
 
         <!-- Firebase Service -->
         <service android:name=".FCMClass">
