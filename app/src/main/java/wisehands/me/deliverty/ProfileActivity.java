@@ -1,16 +1,13 @@
 package wisehands.me.deliverty;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -28,24 +25,27 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final String TAG = "MY LOG!!!!!";
+    private static final String TAG = "TEST!!!!";
 
 //    public static final String API_HOST = "http://192.168.1.3:8080";
-    public static final String API_HOST = "http://192.168.1.88:8080";
-//  public static final String API_HOST = "http://192.168.0.13:8080";
+//    public static final String API_HOST = "http://192.168.1.88:8080";
+    public static final String API_HOST = "http://192.168.0.13:8080";
     private static String firebaseToken;
 
     private TextView testtest, testtest2, gpsstatus, mynetstatus, mylocation;
+    private TextView txtName, txtEmail,vToken;
+
     private LocationManager locationManager;
+
     private ProfileActivity context = this;
     public static String jwttoken;
 
-    private TextView txtName, txtEmail,vToken;
     private FirebaseAuth mAuth;
 
     private final String TOPIC = "JavaSampleApproach";
@@ -75,10 +75,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         txtName.setText(user.getDisplayName());
         txtEmail.setText(user.getEmail());
 
-//        findViewById(R.id.bn_accept).setOnClickListener(this);
-        findViewById(R.id.bn_accept).setVisibility(View.GONE);
-        findViewById(R.id.bn_cancel).setVisibility(View.GONE);
-//        findViewById(R.id.bn_cancel).setOnClickListener(this);
+        findViewById(R.id.bn_accept).setOnClickListener(this);
+        findViewById(R.id.bn_cancel).setOnClickListener(this);
 
 //      create Token, JWT
         FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -93,15 +91,18 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                             context.firebaseToken = fbToken;
                             vToken.setText("firebaseToken received");
 //                            send Token and create Volley POST
+                            String urlPath = "authenticate";
+                            String params = String.format("token=%s", fbToken);
+                            String url = String.format("%s/%s?%s", API_HOST, urlPath, params);
+
                             RequestQueue queue = Volley.newRequestQueue(context);
-                            String url = API_HOST +"/authenticate?token=" + fbToken;
 //                            Request a string response from the provided URL.
                             StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                                     new Response.Listener<String>() {
                                         @Override
                                         public void onResponse(String response) {
                                             jwttoken = response;
-                                            testtest.setText("jwtoken received:  " + jwttoken);
+                                            testtest.setText("jwtoken received and registration is complete");
                                             Toast.makeText(ProfileActivity.this, "registration is complete.",
                                                     Toast.LENGTH_SHORT).show();
                                             Log.i(TAG, "2 step");
@@ -127,21 +128,39 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 });
 
-//         decode JWT
-//        JWT jwt = new JWT(jwstoken);
-//        String subject = jwt.getSubject();
-//        testtest.setText(subject);
-//        try {
-//            testtest2.setText("test JWT change varible: " + jwtok);
-//            Toast.makeText(ProfileActivity.this, jwtok, Toast.LENGTH_SHORT).show();
-//        } catch (Exception e){
-//            testtest.setText("jws token not create in global varible");
-//        }
+
 
     }
 
     public void onJWTTokenReceived(){
-        testtest2.setText("test JWT change varible: " + jwttoken);
+
+        testtest2.setText("send deviceId and check json web token");
+        String deviceId = FirebaseInstanceId.getInstance().getToken();
+        String urlPath = "save-device-token";
+        String params = String.format("jwttoken=%s&deviceId=%s", jwttoken, deviceId);
+        String strURL = String.format("%s/%s?%s", API_HOST, urlPath, params);
+
+        Log.i(TAG, "onJWTTokenAndDeviceIDReceived");
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+        StringRequest postRequest = new StringRequest(Request.Method.POST, strURL,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        Log.i(TAG, "RESPONSE after sending deviceid and  jwttoken");
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // error
+                        Log.i(TAG, "ERROR, ERROR, ERROR  of RESPONSE after sending device token");
+                    }
+                }
+        );queue.add(postRequest);
         Log.i(TAG, "3 step");
     }
 
@@ -150,27 +169,67 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         switch (view.getId()){
             case R.id.bn_accept:
                 acceptOrder();
-            break;
+                break;
             case R.id.bn_cancel:
                 cancelOrder();
-            break;
+                break;
             case R.id.locSetting:
                 startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-            break;
+                break;
         }
     }
 
-    // work with jwt
 
     private void acceptOrder() {
-//        Intent intent = new Intent(this, OrderActivity.class);
-//        startActivity(intent);
+        boolean isactive = true;
+        String urlPath = "isactivecourier";
+        String params = String.format("isactive=%s", isactive);
+        String strURL = String.format("%s/%s?%s", API_HOST, urlPath, params);
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest postRequest = new StringRequest(Request.Method.POST, strURL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        Log.i(TAG, "RESPONSE: you are ready to accept order " + response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // error
+                        Log.i(TAG, "FAILRequest: you aren't ready to accept order");
+                    }
+                }
+        );
+        queue.add(postRequest);
     }
 
     private void cancelOrder() {
-        sendRequestToServer();
+        boolean isactive = false;
+        String urlPath = "finishtheorder";
+        String params = String.format("isactive=%s", isactive);
+        String strURL = String.format("%s/%s?%s", API_HOST, urlPath, params);
 
-        Toast.makeText(ProfileActivity.this, "You are canceled delivery", Toast.LENGTH_SHORT).show();
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest postRequest = new StringRequest(Request.Method.POST, strURL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        Log.i(TAG, "RESPONSE: you are finishing delivery now " + response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // error
+                        Log.i(TAG, "FAILRequest: you aren't ready to accept order");
+                    }
+                }
+        );
+        queue.add(postRequest);
     }
 
     //Request.Method.POST
@@ -181,10 +240,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         double latitude = 16.20;
         double longitude = 4.20;
 
-        String api_host = "http://192.168.1.88:8080";
         String urlPath = "update-courier";
         @SuppressLint("DefaultLocale") String params = String.format("latitude=%f&longitude=%f", latitude, longitude);
-        String strURL = String.format("%s/%s?%s", api_host, urlPath, params);
+        String strURL = String.format("%s/%s?%s", API_HOST, urlPath, params);
 
         RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest postRequest = new StringRequest(Request.Method.POST, strURL,
@@ -213,25 +271,17 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
 
-        // start get location
+    // start get location
 
+    @SuppressLint("MissingPermission")
     @Override
     protected void onResume() {
         super.onResume();
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                1000, 1, locationListener);
+                1000 * 5, 2,
+                locationListener);
         locationManager.requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER, 1000 * 5, 1,
+                LocationManager.NETWORK_PROVIDER, 1000 * 5, 2,
                 locationListener);
         checkEnabled();
     }
@@ -254,19 +304,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             checkEnabled();
         }
 
+        @SuppressLint("MissingPermission")
         @Override
         public void onProviderEnabled(String provider) {
             checkEnabled();
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
             showLocation(locationManager.getLastKnownLocation(provider));
         }
 
@@ -282,10 +323,14 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     };
 
     private void showLocation(final Location location) {
+        Log.i(TAG, "start to showing location");
+
         if (location == null)
             return;
         if (location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
             mylocation.setText(formatLocation(location));
+            Log.i(TAG, "location" + location.getLatitude() + location.getLongitude());
+
         } else
         if (location.getProvider().equals(
                 LocationManager.NETWORK_PROVIDER)) {
@@ -301,16 +346,17 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     public void onComplete(@NonNull Task<GetTokenResult> task) {
                         if (task.isSuccessful()) {
                             String idToken = task.getResult().getToken();
+                            Log.i(TAG, "idToken that we send with update location" + idToken);
 
                             double lat = locationVar.getLatitude();
                             double lon = locationVar.getLongitude();
+                            Log.i(TAG, lat + " " + lon);
 
                             String urlPath = "update-courier-location";
                             @SuppressLint("DefaultLocale")
                             String params = String.format("token=%s&latitude=%f&longitude=%f", idToken, lat, lon);
                             String updateCourierLocation = String.format("%s/%s?%s", API_HOST, urlPath, params);
 
-//                            urls.setText(lat+" "+lon);
                             RequestQueue queue = Volley.newRequestQueue(self);
                             StringRequest postRequest = new StringRequest(Request.Method.POST, updateCourierLocation,
                                     new Response.Listener<String>()
@@ -318,7 +364,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                                         @Override
                                         public void onResponse(String response) {
                                             // response
-                                            Log.d("Response", response);
+                                            Log.i(TAG, "response location " + response);
                                         }
                                     },
                                     new Response.ErrorListener()
@@ -326,15 +372,15 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
                                             // error
-                                            Log.d("Error.Response", error.getMessage());
+                                            Log.i(TAG, "Error of sending location");
                                         }
                                     }
                             );
                             queue.add(postRequest);
 
                         } else {
-                            Toast.makeText(ProfileActivity.this, "Token with URL no send",
-                                    Toast.LENGTH_SHORT).show();
+                            Log.i(TAG, "Error of sending URL location");
+
                         }
                     }
                 });
@@ -353,11 +399,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private void checkEnabled() {
         gpsstatus.setText("GPS enabled: "
-                + locationManager
-                .isProviderEnabled(LocationManager.GPS_PROVIDER));
+                + locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER));
         mynetstatus.setText("NET enabled: "
-                + locationManager
-                .isProviderEnabled(LocationManager.NETWORK_PROVIDER));
+                + locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER));
     }
 
 

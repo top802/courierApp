@@ -65,15 +65,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //and inside onClick() method we are calling the signIn() method that will open
         //google sign in intent
 
-
-
-
-//        findViewById(R.id.bn_profile).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                    getProfile();
-//            }
-//        });
     }
 
 //    private void getProfile() {

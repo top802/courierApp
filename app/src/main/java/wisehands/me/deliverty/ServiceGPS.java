@@ -23,11 +23,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import static wisehands.me.deliverty.ProfileActivity.API_HOST;
+
 public class ServiceGPS extends Service {
 
     private Context self = this;
 
-    private static final String TAG = "TEST--------GPS";
+    private static final String TAG = "TEST!!!!";
     private static final int LOCATION_INTERVAL = 1000;
     private static final float LOCATION_DISTANCE = 5;
 
@@ -67,10 +69,11 @@ public class ServiceGPS extends Service {
 //            Toast.makeText(ServiceGPS.this, "location BG" + latitude + " " + longitude,
 //                    Toast.LENGTH_SHORT).show();
 
-            String apihttp = "http://192.168.1.88:8080";
+
             String urlPath = "update-courier";
-            @SuppressLint("DefaultLocale") String params = String.format("latitude=%f&longitude=%f", latitude, longitude);
-            String strURL = String.format("%s/%s?%s", apihttp, urlPath, params);
+            @SuppressLint("DefaultLocale")
+            String params = String.format("latitude=%f&longitude=%f", latitude, longitude);
+            String strURL = String.format("%s/%s?%s", API_HOST, urlPath, params);
 
             RequestQueue queue = Volley.newRequestQueue(self);
             StringRequest postRequest = new StringRequest(Request.Method.POST, strURL,
@@ -79,11 +82,12 @@ public class ServiceGPS extends Service {
                         @Override
                         public void onResponse(String response) {
                             // response
-                            Toast.makeText(ServiceGPS.this, "RequestToServer",
-                                    Toast.LENGTH_SHORT).show();
-                            Toast.makeText(ServiceGPS.this, response,
-                                    Toast.LENGTH_SHORT).show();
-                            Log.d("Response", "RESPONSE" + response);
+//                            Toast.makeText(ServiceGPS.this, "RequestToServer",
+//                                    Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(ServiceGPS.this, response,
+//                                    Toast.LENGTH_SHORT).show();
+                            Log.i(TAG, "BG location response " + response);
+
                         }
                     },
                     new Response.ErrorListener()
@@ -93,7 +97,8 @@ public class ServiceGPS extends Service {
                             // error
                             Toast.makeText(ServiceGPS.this, "FAILRequestToServer",
                                     Toast.LENGTH_SHORT).show();
-                            Log.d("Error.Response", error.getMessage());
+                            Log.i(TAG, "ERROR BG location response ");
+
                         }
                     }
             );queue.add(postRequest);
@@ -144,10 +149,10 @@ public class ServiceGPS extends Service {
 
     private void sendLocation(double latitude, double longitude) {
 
-        String apihttp = "http://192.168.1.88:8080";
         String urlPath = "update-courier";
-        @SuppressLint("DefaultLocale") String params = String.format("latitude=%f&longitude=%f", latitude, longitude);
-        String strURL = String.format("%s/%s?%s", apihttp, urlPath, params);
+        @SuppressLint("DefaultLocale")
+        String params = String.format("latitude=%f&longitude=%f", latitude, longitude);
+        String strURL = String.format("%s/%s?%s", API_HOST, urlPath, params);
 
         RequestQueue queue = Volley.newRequestQueue(self);
         StringRequest postRequest = new StringRequest(Request.Method.POST, strURL,
@@ -186,7 +191,7 @@ public class ServiceGPS extends Service {
 
         Toast.makeText(ServiceGPS.this, "onStartCommand",
                 Toast.LENGTH_SHORT).show();
-        Log.e(TAG, "onStartCommand");
+        Log.i(TAG, "onStartCommand");
 
         initializeLocationManager();
         try {
@@ -198,7 +203,7 @@ public class ServiceGPS extends Service {
                     Toast.LENGTH_SHORT).show();
             Log.i(TAG, "fail to request location update, ignore", ex);
         } catch (IllegalArgumentException ex) {
-            Log.d(TAG, "network provider does not exist, " + ex.getMessage());
+            Log.i(TAG, "network provider does not exist, " + ex.getMessage());
         }
         try {
             mLocationManager.requestLocationUpdates(
