@@ -45,7 +45,7 @@ public class ServiceGPS extends Service {
 
         public MyLocationListener(String provider)
         {
-            Log.e(TAG, "LocationListener " + provider);
+            Log.i(TAG, "Service: LocationListener " + provider);
             mLastLocation = new Location(provider);
         }
 
@@ -57,7 +57,7 @@ public class ServiceGPS extends Service {
             }
             showLocation(location);
 
-            Log.e(TAG, "onLocationChanged: " + location);
+            Log.i(TAG, "Service: onLocationChanged: " + location);
             mLastLocation.set(location);
         }
 
@@ -66,9 +66,6 @@ public class ServiceGPS extends Service {
 
             double latitude = location.getLatitude();
             double longitude = location.getLongitude();
-//            Toast.makeText(ServiceGPS.this, "location BG" + latitude + " " + longitude,
-//                    Toast.LENGTH_SHORT).show();
-
 
             String urlPath = "update-courier";
             @SuppressLint("DefaultLocale")
@@ -81,12 +78,8 @@ public class ServiceGPS extends Service {
                     {
                         @Override
                         public void onResponse(String response) {
-                            // response
-//                            Toast.makeText(ServiceGPS.this, "RequestToServer",
-//                                    Toast.LENGTH_SHORT).show();
-//                            Toast.makeText(ServiceGPS.this, response,
-//                                    Toast.LENGTH_SHORT).show();
-                            Log.i(TAG, "BG location response " + response);
+
+                            Log.i(TAG, "Service: BG location response " + response);
 
                         }
                     },
@@ -97,7 +90,7 @@ public class ServiceGPS extends Service {
                             // error
                             Toast.makeText(ServiceGPS.this, "FAILRequestToServer",
                                     Toast.LENGTH_SHORT).show();
-                            Log.i(TAG, "ERROR BG location response ");
+                            Log.i(TAG, "Service:  ERROR BG location response ");
 
                         }
                     }
@@ -109,7 +102,7 @@ public class ServiceGPS extends Service {
         @Override
         public void onProviderDisabled(String provider)
         {
-            Log.e(TAG, "onProviderDisabled: " + provider);
+            Log.i(TAG, "Service: onProviderDisabled: " + provider);
         }
 
         @Override
@@ -127,13 +120,13 @@ public class ServiceGPS extends Service {
                 return;
             }
             showLocation(mLocationManager.getLastKnownLocation(provider));
-            Log.e(TAG, "onProviderEnabled: " + provider);
+            Log.i(TAG, "Service: onProviderEnabled: " + provider);
         }
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras)
         {
-            Log.e(TAG, "onStatusChanged: " + provider);
+            Log.i(TAG, "Service: onStatusChanged: " + provider);
         }
     }
 
@@ -188,10 +181,7 @@ public class ServiceGPS extends Service {
         mainActivity = getApplication();
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-
-        Toast.makeText(ServiceGPS.this, "onStartCommand",
-                Toast.LENGTH_SHORT).show();
-        Log.i(TAG, "onStartCommand");
+        Log.i(TAG, "Service: onStartCommand");
 
         initializeLocationManager();
         try {

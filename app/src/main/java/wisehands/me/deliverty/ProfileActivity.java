@@ -33,9 +33,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private static final String TAG = "TEST!!!!";
 
-//    public static final String API_HOST = "http://192.168.1.3:8080";
+    public static final String API_HOST = "http://192.168.1.3:8080";
 //    public static final String API_HOST = "http://192.168.1.88:8080";
-    public static final String API_HOST = "http://192.168.0.13:8080";
+//    public static final String API_HOST = "http://192.168.0.13:8080";
     private static String firebaseToken;
 
     private TextView testtest, testtest2, gpsstatus, mynetstatus, mylocation;
@@ -140,7 +140,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         String params = String.format("jwttoken=%s&deviceId=%s", jwttoken, deviceId);
         String strURL = String.format("%s/%s?%s", API_HOST, urlPath, params);
 
-        Log.i(TAG, "onJWTTokenAndDeviceIDReceived");
 
         RequestQueue queue = Volley.newRequestQueue(context);
         StringRequest postRequest = new StringRequest(Request.Method.POST, strURL,
@@ -149,7 +148,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     @Override
                     public void onResponse(String response) {
                         // response
-                        Log.i(TAG, "RESPONSE after sending deviceid and  jwttoken");
+                        Log.i(TAG, "3.1 step");
                     }
                 },
                 new Response.ErrorListener()
@@ -161,7 +160,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 }
         );queue.add(postRequest);
-        Log.i(TAG, "3 step");
+        Log.i(TAG, "3.2 step");
     }
 
     @Override
@@ -273,25 +272,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     // start get location
 
-    @SuppressLint("MissingPermission")
-    @Override
-    protected void onResume() {
-        super.onResume();
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                1000 * 5, 2,
-                locationListener);
-        locationManager.requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER, 1000 * 5, 2,
-                locationListener);
-        checkEnabled();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        locationManager.removeUpdates(locationListener);
-    }
-
     private LocationListener locationListener = new LocationListener() {
 
         @Override
@@ -329,13 +309,16 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             return;
         if (location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
             mylocation.setText(formatLocation(location));
-            Log.i(TAG, "location" + location.getLatitude() + location.getLongitude());
+            Log.i(TAG, "4 step");
 
         } else
         if (location.getProvider().equals(
                 LocationManager.NETWORK_PROVIDER)) {
             mylocation.setText(formatLocation(location));
         }
+        Log.i(TAG, "5 step" + location.getLatitude() + location.getLongitude());
+//        Log.i(TAG, "location1" + location.getLatitude() + location.getLongitude());
+
 
         FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
         final Location locationVar = location;
@@ -346,7 +329,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     public void onComplete(@NonNull Task<GetTokenResult> task) {
                         if (task.isSuccessful()) {
                             String idToken = task.getResult().getToken();
-                            Log.i(TAG, "idToken that we send with update location" + idToken);
+                            Log.i(TAG, "6 step idToken that we send with update location");
 
                             double lat = locationVar.getLatitude();
                             double lon = locationVar.getLongitude();
@@ -364,7 +347,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                                         @Override
                                         public void onResponse(String response) {
                                             // response
-                                            Log.i(TAG, "response location " + response);
+                                            Log.i(TAG, "7 step" + response);
                                         }
                                     },
                                     new Response.ErrorListener()
@@ -389,12 +372,31 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
+    @SuppressLint("DefaultLocale")
     private String formatLocation(Location location) {
         if (location == null)
             return "";
-        return String.format(
-                "Coordinates: lat = %1$.4f, lon = %2$.4f",
-                location.getLatitude(), location.getLongitude());
+        return String.format("Coordinates: lat = %1$.4f, lon = %2$.4f", location.getLatitude(), location.getLongitude());
+    }
+
+
+    @SuppressLint("MissingPermission")
+    @Override
+    protected void onResume() {
+        super.onResume();
+        locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,1000 * 5, 2,
+                locationListener);
+        locationManager.requestLocationUpdates(
+                LocationManager.NETWORK_PROVIDER, 1000 * 5, 2,
+                locationListener);
+        checkEnabled();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        locationManager.removeUpdates(locationListener);
     }
 
     private void checkEnabled() {
