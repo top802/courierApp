@@ -33,7 +33,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private static final String TAG = "TEST!!!!";
 
-    public static final String API_HOST = "http://192.168.1.3:8080";
+    public static final String API_HOST = "http://192.168.0.21:8080";
 //    public static final String API_HOST = "http://192.168.1.88:8080";
 //    public static final String API_HOST = "http://192.168.0.13:8080";
     private static String firebaseToken;
@@ -312,8 +312,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             Log.i(TAG, "4 step");
 
         } else
-        if (location.getProvider().equals(
-                LocationManager.NETWORK_PROVIDER)) {
+        if (location.getProvider().equals(LocationManager.NETWORK_PROVIDER)) {
             mylocation.setText(formatLocation(location));
         }
         Log.i(TAG, "5 step" + location.getLatitude() + location.getLongitude());

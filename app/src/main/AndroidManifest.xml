@@ -3,6 +3,7 @@
     package="wisehands.me.deliverty">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
@@ -20,11 +21,15 @@
             </intent-filter>
         </activity>
         <activity android:name=".ProfileActivity" />
-
+        <activity android:name=".MassegeOrder" />
         <!-- Firebase MESSAGING_EVENT Service -->
-        <service android:name=".MyFirebaseMessagingService">
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
 
@@ -40,6 +45,8 @@
             android:name=".ServiceGPS"
             android:enabled="true"
             android:exported="true" />
+
+        <activity android:name=".MassegeOrder"></activity>
     </application>
 
 </manifest>

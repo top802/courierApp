@@ -1,18 +1,15 @@
 package wisehands.me.deliverty;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -87,9 +84,7 @@ public class ServiceGPS extends Service {
                     {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            // error
-                            Toast.makeText(ServiceGPS.this, "FAILRequestToServer",
-                                    Toast.LENGTH_SHORT).show();
+
                             Log.i(TAG, "Service:  ERROR BG location response ");
 
                         }
@@ -105,20 +100,10 @@ public class ServiceGPS extends Service {
             Log.i(TAG, "Service: onProviderDisabled: " + provider);
         }
 
+        @SuppressLint("MissingPermission")
         @Override
         public void onProviderEnabled(String provider)
         {
-
-            if (ActivityCompat.checkSelfPermission(self, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(self, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
             showLocation(mLocationManager.getLastKnownLocation(provider));
             Log.i(TAG, "Service: onProviderEnabled: " + provider);
         }
@@ -138,40 +123,6 @@ public class ServiceGPS extends Service {
     @Override
     public IBinder onBind(Intent arg0) {
         return null;
-    }
-
-    private void sendLocation(double latitude, double longitude) {
-
-        String urlPath = "update-courier";
-        @SuppressLint("DefaultLocale")
-        String params = String.format("latitude=%f&longitude=%f", latitude, longitude);
-        String strURL = String.format("%s/%s?%s", API_HOST, urlPath, params);
-
-        RequestQueue queue = Volley.newRequestQueue(self);
-        StringRequest postRequest = new StringRequest(Request.Method.POST, strURL,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // response
-                        Toast.makeText(ServiceGPS.this, "RequestToServer",
-                                Toast.LENGTH_SHORT).show();
-                        Toast.makeText(ServiceGPS.this, response,
-                                Toast.LENGTH_SHORT).show();
-                        Log.d("Response", "RESPONSE" + response);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // error
-                        Toast.makeText(ServiceGPS.this, "FAILRequestToServer",
-                                Toast.LENGTH_SHORT).show();
-                        Log.d("Error.Response", error.getMessage());
-                    }
-                }
-        );
-        queue.add(postRequest);
-
     }
 
     @SuppressLint("MissingPermission")
@@ -205,38 +156,6 @@ public class ServiceGPS extends Service {
             Log.d(TAG, "gps provider does not exist " + ex.getMessage());
         }
 
-
-//        LocationListener listener = new LocationListener() {
-//            @Override
-//            public void onLocationChanged(Location location) {
-//                if (lastLocation == null) {
-//                    lastLocation = location;
-//                }
-//                double latitude = location.getLatitude();
-//                double longitude = location.getLongitude();
-//                sendLocation(latitude, longitude);
-//                Toast.makeText(ServiceGPS.this, latitude + "" + longitude, Toast.LENGTH_SHORT).show();
-//
-//            }
-//
-//            @Override
-//            public void onStatusChanged(String s, int i, Bundle bundle) {
-//
-//            }
-//
-//            @Override
-//            public void onProviderEnabled(String s) {
-//
-//            }
-//
-//            @Override
-//            public void onProviderDisabled(String s) {
-//
-//            }
-//        };
-//        LocationManager locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//        locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, listener);
-
         super.onStartCommand(intent, flags, startId);
         return START_STICKY;
     }
@@ -244,8 +163,6 @@ public class ServiceGPS extends Service {
     @Override
     public void onCreate() {
 
-////        Toast.makeText(ServiceGPS.this, "onCreate",
-////                Toast.LENGTH_SHORT).show();
         Log.e(TAG, "onCreate");
 
     }
