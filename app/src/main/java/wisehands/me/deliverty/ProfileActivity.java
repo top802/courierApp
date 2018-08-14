@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,15 +32,14 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final String TAG = "TEST!!!!";
+    private static final String TAG = "STEPS";
 
-    public static final String API_HOST = "http://192.168.0.21:8080";
-//    public static final String API_HOST = "http://192.168.1.88:8080";
-//    public static final String API_HOST = "http://192.168.0.13:8080";
+    public static final String API_HOST = "http://192.168.1.88:8080";
     private static String firebaseToken;
 
     private TextView testtest, testtest2, gpsstatus, mynetstatus, mylocation;
     private TextView txtName, txtEmail,vToken;
+    private Switch switchButton;
 
     private LocationManager locationManager;
 
@@ -55,15 +55,16 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        testtest = (TextView) findViewById(R.id.url);
-        testtest2 = (TextView) findViewById(R.id.url2);
-        mylocation = (TextView) findViewById(R.id.mylocation);
+//        testtest = (TextView) findViewById(R.id.url);
+//        testtest2 = (TextView) findViewById(R.id.url2);
+//        mylocation = (TextView) findViewById(R.id.mylocation);
+//        vToken = (TextView) findViewById(R.id.vToken);
         mynetstatus = (TextView) findViewById(R.id.netstatus);
         gpsstatus = (TextView) findViewById(R.id.gpsstatus);
-        vToken = (TextView) findViewById(R.id.vToken);
         txtName = (TextView) findViewById(R.id.txtName);
         txtEmail = (TextView) findViewById(R.id.txtEmail);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        switchButton = (Switch) findViewById(R.id.switch1);
 
         findViewById(R.id.locSetting).setOnClickListener(this);
 
@@ -75,21 +76,20 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         txtName.setText(user.getDisplayName());
         txtEmail.setText(user.getEmail());
 
-        findViewById(R.id.bn_accept).setOnClickListener(this);
-        findViewById(R.id.bn_cancel).setOnClickListener(this);
 
 //      create Token, JWT
+//      startService(new Intent(context, ServiceGPS.class));
+
         FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
-        Log.i(TAG, "1 step");
+        Log.i(TAG, "1 step - get IdToken");
         mUser.getIdToken(true)
                 .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
                     public void onComplete(@NonNull Task<GetTokenResult> task) {
                         if (task.isSuccessful()) {
-                            startService(new Intent(context, ServiceGPS.class));
 
                             final String fbToken = task.getResult().getToken();
                             context.firebaseToken = fbToken;
-                            vToken.setText("firebaseToken received");
+//                            vToken.setText("firebaseToken received");
 //                            send Token and create Volley POST
                             String urlPath = "authenticate";
                             String params = String.format("token=%s", fbToken);
@@ -102,7 +102,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                                         @Override
                                         public void onResponse(String response) {
                                             jwttoken = response;
-                                            testtest.setText("jwtoken received and registration is complete");
+//                                            testtest.setText("jwtoken received and registration is complete");
                                             Toast.makeText(ProfileActivity.this, "registration is complete.",
                                                     Toast.LENGTH_SHORT).show();
                                             Log.i(TAG, "2 step");
@@ -134,7 +134,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     public void onJWTTokenReceived(){
 
-        testtest2.setText("send deviceId and check json web token");
+//        testtest2.setText("send deviceId and check json web token");
         String deviceId = FirebaseInstanceId.getInstance().getToken();
         String urlPath = "save-device-token";
         String params = String.format("jwttoken=%s&deviceId=%s", jwttoken, deviceId);
@@ -166,109 +166,66 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.bn_accept:
-                acceptOrder();
-                break;
-            case R.id.bn_cancel:
-                cancelOrder();
-                break;
             case R.id.locSetting:
                 startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
                 break;
         }
     }
 
+    public void onSwitchClick(View view){
+        if(switchButton.isChecked()){
+            Log.i(TAG, "RESPONSE: you are ready to work " + true);
+            boolean isactive = true;
+            String urlPath = "readytowork";
+            String params = String.format("isactive=%s", isactive);
+            String strURL = String.format("%s/%s?%s", API_HOST, urlPath, params);
 
-    private void acceptOrder() {
-        boolean isactive = true;
-        String urlPath = "isactivecourier";
-        String params = String.format("isactive=%s", isactive);
-        String strURL = String.format("%s/%s?%s", API_HOST, urlPath, params);
+            RequestQueue queue = Volley.newRequestQueue(this);
+            StringRequest postRequest = new StringRequest(Request.Method.POST, strURL,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            // response
+                            Log.i(TAG, "RESPONSE: you are ready to work " + response);
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            // error
+                            Log.i(TAG, "FAILRequest: you aren't ready to work");
+                        }
+                    }
+            );
+            queue.add(postRequest);
+        }
+        else { boolean isactive = false;
+            Log.i(TAG, "RESPONSE: you are not ready to work " + false);
+            String urlPath = "notreadytowork";
+            String params = String.format("isactive=%s", isactive);
+            String strURL = String.format("%s/%s?%s", API_HOST, urlPath, params);
 
-        RequestQueue queue = Volley.newRequestQueue(this);
-        StringRequest postRequest = new StringRequest(Request.Method.POST, strURL,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // response
-                        Log.i(TAG, "RESPONSE: you are ready to accept order " + response);
+            RequestQueue queue = Volley.newRequestQueue(this);
+            StringRequest postRequest = new StringRequest(Request.Method.POST, strURL,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            // response
+                            Log.i(TAG, "RESPONSE: you are not ready to work " + response);
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            // error
+                            Log.i(TAG, "FAILRequest: you aren't ready to work");
+                        }
                     }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // error
-                        Log.i(TAG, "FAILRequest: you aren't ready to accept order");
-                    }
-                }
-        );
-        queue.add(postRequest);
+            );
+            queue.add(postRequest);
+
+        }
     }
-
-    private void cancelOrder() {
-        boolean isactive = false;
-        String urlPath = "finishtheorder";
-        String params = String.format("isactive=%s", isactive);
-        String strURL = String.format("%s/%s?%s", API_HOST, urlPath, params);
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-        StringRequest postRequest = new StringRequest(Request.Method.POST, strURL,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // response
-                        Log.i(TAG, "RESPONSE: you are finishing delivery now " + response);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // error
-                        Log.i(TAG, "FAILRequest: you aren't ready to accept order");
-                    }
-                }
-        );
-        queue.add(postRequest);
-    }
-
-    //Request.Method.POST
-    private void sendRequestToServer() {
-//        Toast.makeText(ServiceGPS.this, "sendRequestToServer",
-//                Toast.LENGTH_SHORT).show();
-
-        double latitude = 16.20;
-        double longitude = 4.20;
-
-        String urlPath = "update-courier";
-        @SuppressLint("DefaultLocale") String params = String.format("latitude=%f&longitude=%f", latitude, longitude);
-        String strURL = String.format("%s/%s?%s", API_HOST, urlPath, params);
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-        StringRequest postRequest = new StringRequest(Request.Method.POST, strURL,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // response
-                        Toast.makeText(ProfileActivity.this, "RequestToServer",
-                                Toast.LENGTH_SHORT).show();
-                        Toast.makeText(ProfileActivity.this, response,
-                                Toast.LENGTH_SHORT).show();
-                        Log.d("Response", "RESPONSE" + response);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // error
-                        Toast.makeText(ProfileActivity.this, "FAILRequestToServer",
-                                Toast.LENGTH_SHORT).show();
-                        Log.d("Error.Response", error.getMessage());
-                    }
-                }
-        );
-        queue.add(postRequest);
-    }
-
 
     // start get location
 
@@ -308,12 +265,15 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         if (location == null)
             return;
         if (location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
-            mylocation.setText(formatLocation(location));
+//            mylocation.setText(formatLocation(location));
             Log.i(TAG, "4 step");
+            Log.i(TAG, "4 step " + formatLocation(location));
 
         } else
         if (location.getProvider().equals(LocationManager.NETWORK_PROVIDER)) {
-            mylocation.setText(formatLocation(location));
+            Log.i(TAG, "4 step " + formatLocation(location));
+
+//            mylocation.setText(formatLocation(location));
         }
         Log.i(TAG, "5 step" + location.getLatitude() + location.getLongitude());
 //        Log.i(TAG, "location1" + location.getLatitude() + location.getLongitude());

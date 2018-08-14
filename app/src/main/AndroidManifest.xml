@@ -13,16 +13,31 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".ProfileActivity" />
-        <activity android:name=".MassegeOrder" />
-        <!-- Firebase MESSAGING_EVENT Service -->
+        <!-- idToken Firebase Service -->
+        <service android:name=".ProfileActivity">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+
+        <activity android:name=".MessageOrder">
+            <intent-filter>
+                <action android:name=".MessageOrder" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+          <!-- Firebase MESSAGING_EVENT Service -->
         <service
             android:name=".MyFirebaseMessagingService"
             android:enabled="true"
@@ -33,12 +48,6 @@
             </intent-filter>
         </service>
 
-        <!-- idToken Firebase Service -->
-        <service android:name=".ProfileActivity">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-            </intent-filter>
-        </service>
 
         <!-- Service GPS -->
         <service
@@ -46,7 +55,6 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".MassegeOrder"></activity>
     </application>
 
 </manifest>

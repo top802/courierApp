@@ -35,39 +35,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtName" />
 
-    <Button
-        android:id="@+id/bn_accept"
-        android:layout_width="214dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
-        android:text="Accept delivery"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mylocation" />
-
-    <Button
-        android:id="@+id/bn_cancel"
-        android:layout_width="213dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="Cancel delivery"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bn_accept" />
-
-    <TextView
-        android:id="@+id/mylocation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="84dp"
-        android:text="location"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtEmail" />
-
     <TextView
         android:id="@+id/gpsstatus"
         android:layout_width="wrap_content"
@@ -99,55 +66,86 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/netstatus" />
 
-    <TextView
-        android:id="@+id/url"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="test rsponce JWT"
+    <Switch
+        android:id="@+id/switch1"
+        android:layout_width="171dp"
+        android:layout_height="19dp"
+        android:layout_marginTop="24dp"
+        android:text="Accept delivery"
+        android:textAlignment="center"
+        android:onClick="onSwitchClick"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mylocation" />
+        app:layout_constraintTop_toBottomOf="@+id/locSetting" />
+
+
+    <!--  TextViews for to check the works steps
 
     <TextView
-        android:id="@+id/url2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="test JWT change varible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/url" />
+        android:id="@+id/mylocation"
+        android:layout_width="82dp"
+        android:layout_height="19dp"
+        android:layout_marginEnd="68dp"
+        android:layout_marginLeft="48dp"
+        android:layout_marginTop="24dp"
+        android:text="location"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toStartOf="@+id/locSetting"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtEmail" />
 
-    <TextView
-        android:id="@+id/vToken"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="180dp"
-        android:text="token"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/url" />
-    <TextView
-        android:id="@+id/titlemassege"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="18dp"
-        android:text="titlemassege"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vToken" />
-    <TextView
-        android:id="@+id/bodymassege"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="18dp"
-        android:text="boby massege"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titlemassege" />
+
+        <TextView
+            android:id="@+id/url"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="test rsponce JWT"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mylocation" />
+
+
+        <TextView
+            android:id="@+id/url2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="test JWT change varible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.502"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/url" />
+
+        <TextView
+            android:id="@+id/vToken"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="48dp"
+            android:layout_marginTop="80dp"
+            android:text="token"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/url2" />
+        <TextView
+            android:id="@+id/titlemassege"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="18dp"
+            android:text="titlemassege"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/vToken" />
+        <TextView
+            android:id="@+id/bodymassege"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="18dp"
+            android:text="boby massege"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/titlemassege" />
+            -->
 
 </android.support.constraint.ConstraintLayout>

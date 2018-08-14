@@ -129,6 +129,9 @@ public class ServiceGPS extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+        Toast.makeText(ServiceGPS.this, "start service",
+                Toast.LENGTH_SHORT).show();
+
         mainActivity = getApplication();
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 

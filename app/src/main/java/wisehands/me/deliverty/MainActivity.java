@@ -28,10 +28,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     //a constant for detecting the login intent result
-    private static final int RC_SIGN_IN = 234;
+    private static final int RC_SIGN_IN = 420;
 
     //Tag for the logs optional
-    private static final String TAG = "simplifiedcoding";
+    private static final String TAG = "GoogleSingIn";
 
     //creating a GoogleSignInClient object
     GoogleSignInClient mGoogleSignInClient;
