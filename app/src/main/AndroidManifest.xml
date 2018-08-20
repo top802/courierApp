@@ -14,8 +14,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-
-
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,24 +22,27 @@
         </activity>
 
         <activity android:name=".ProfileActivity" />
+
+        <activity
+            android:name=".MessageOrder">
+            <intent-filter>
+                <action android:name=".MessageOrder" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
         <!-- idToken Firebase Service -->
         <service android:name=".ProfileActivity">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-
-        <activity android:name=".MessageOrder">
-            <intent-filter>
-                <action android:name=".MessageOrder" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
           <!-- Firebase MESSAGING_EVENT Service -->
         <service
             android:name=".MyFirebaseMessagingService"
             android:enabled="true"
             android:exported="true">
+
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />

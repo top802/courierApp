@@ -34,7 +34,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private static final String TAG = "STEPS";
 
-    public static final String API_HOST = "http://192.168.1.88:8080";
+    public static final String API_HOST = "http://192.168.1.2:8080";
     private static String firebaseToken;
 
     private TextView testtest, testtest2, gpsstatus, mynetstatus, mylocation;
@@ -54,6 +54,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+//        startService(new Intent(this, MyFirebaseMessagingService.class));
 
 //        testtest = (TextView) findViewById(R.id.url);
 //        testtest2 = (TextView) findViewById(R.id.url2);
@@ -76,6 +77,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         txtName.setText(user.getDisplayName());
         txtEmail.setText(user.getEmail());
 
+        switchButton.setChecked(false);
+     //   onSwitchClick(switchButton.isChecked(false));
 
 //      create Token, JWT
 //      startService(new Intent(context, ServiceGPS.class));
@@ -89,14 +92,18 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
                             final String fbToken = task.getResult().getToken();
                             context.firebaseToken = fbToken;
+                            Log.i(TAG, "1/1 step - send IdToken");
+
 //                            vToken.setText("firebaseToken received");
 //                            send Token and create Volley POST
                             String urlPath = "authenticate";
                             String params = String.format("token=%s", fbToken);
                             String url = String.format("%s/%s?%s", API_HOST, urlPath, params);
 
-                            RequestQueue queue = Volley.newRequestQueue(context);
+                            Log.i(TAG, "1/2 step - get IdToken" + url);
 //                            Request a string response from the provided URL.
+
+                            RequestQueue queue = Volley.newRequestQueue(context);
                             StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                                     new Response.Listener<String>() {
                                         @Override
@@ -105,7 +112,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 //                                            testtest.setText("jwtoken received and registration is complete");
                                             Toast.makeText(ProfileActivity.this, "registration is complete.",
                                                     Toast.LENGTH_SHORT).show();
-                                            Log.i(TAG, "2 step");
+                                            Log.i(TAG, "2 step " + "registration is complete.");
                                             context.onJWTTokenReceived();
                                         }
                                     }, new Response.ErrorListener() {
@@ -174,9 +181,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     public void onSwitchClick(View view){
         if(switchButton.isChecked()){
-            Log.i(TAG, "RESPONSE: you are ready to work " + true);
+            Log.i(TAG, "you are ready to work " + true);
             boolean isactive = true;
-            String urlPath = "readytowork";
+            String urlPath = "isactivecourier";
             String params = String.format("isactive=%s", isactive);
             String strURL = String.format("%s/%s?%s", API_HOST, urlPath, params);
 
@@ -198,10 +205,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     }
             );
             queue.add(postRequest);
+            switchButton.setChecked(true);
         }
         else { boolean isactive = false;
             Log.i(TAG, "RESPONSE: you are not ready to work " + false);
-            String urlPath = "notreadytowork";
+            String urlPath = "finishtheorder";
             String params = String.format("isactive=%s", isactive);
             String strURL = String.format("%s/%s?%s", API_HOST, urlPath, params);
 

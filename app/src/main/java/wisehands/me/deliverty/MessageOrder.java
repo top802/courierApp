@@ -30,25 +30,41 @@ public class MessageOrder extends AppCompatActivity implements View.OnClickListe
         order = findViewById(R.id.order);
         address = findViewById(R.id.address);
 
-
         findViewById(R.id.bn_accept).setOnClickListener(this);
         findViewById(R.id.bn_cancel).setOnClickListener(this);
 
-        Bundle bundle = getIntent().getExtras();
-        String addres = bundle.getString("address");
-        String orderr = bundle.getString("order");
-
-        Log.d(TAG, "onCreate: data: " + orderr + addres);
-
-        order.setText(orderr);
-        address.setText(addres);
+        handleIntent(getIntent());
 
     }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+
+        String orderr = intent.getStringExtra("order");
+        String addres = intent.getStringExtra("address");
+
+        Log.d(TAG, "MessageOrder: data: " + orderr + "  " + addres);
+        if(addres != null && orderr != null) {
+            order.setText(orderr);
+            address.setText(addres);
+        } else {
+            order.setText("Error");
+            address.setText("Error");
+        }
+    }
+
+
 
     @Override
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.bn_accept:
+                startService(new Intent(this, ServiceGPS.class));
                 acceptOrder();
                 break;
             case R.id.bn_cancel:
@@ -63,9 +79,8 @@ public class MessageOrder extends AppCompatActivity implements View.OnClickListe
 
 
     private void acceptOrder() {
-        startService(new Intent(this, ServiceGPS.class));
         boolean isactive = true;
-        String urlPath = "isactivecourier";
+        String urlPath = "readytowork";
         String params = String.format("isactive=%s", isactive);
         String strURL = String.format("%s/%s?%s", API_HOST, urlPath, params);
 
@@ -92,7 +107,7 @@ public class MessageOrder extends AppCompatActivity implements View.OnClickListe
     private void cancelOrder() {
         stopService(new Intent(this, ServiceGPS.class));
         boolean isactive = false;
-        String urlPath = "finishtheorder";
+        String urlPath = "notreadytowork";
         String params = String.format("isactive=%s", isactive);
         String strURL = String.format("%s/%s?%s", API_HOST, urlPath, params);
 
