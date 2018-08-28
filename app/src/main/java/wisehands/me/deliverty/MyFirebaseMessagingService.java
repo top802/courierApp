@@ -93,7 +93,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setWhen(System.currentTimeMillis())
                 .setLargeIcon(bitmap)
-                .setSmallIcon(R.drawable.logo_black)
+                .setSmallIcon(R.drawable.main_logo_black)
                 .setSound(soundUri)
                 .setVibrate(pattern)
                 .setContentTitle(title)
@@ -103,6 +103,20 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         notificationManager.notify(notificationId, notificationBuilder.build());
 
 //
+//        @Override
+//        protected void onMessage(Context arg0, Intent arg1) {
+//
+//            String Message = arg1.getStringExtra("payload");
+//            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//
+//            notificationManager.notify(
+//                    new Random().nextInt(),
+//                    new NotificationCompat.Builder(this).setContentTitle("Message")
+//                            .setWhen(System.currentTimeMillis())
+//                            .setDefaults(Notification.DEFAULT_ALL)
+//                            .setContentText(Message).build());
+//
+
 //        Intent intent = new Intent(this, MessageOrder.class);
 //        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 //        PendingIntent pendingIntent = PendingIntent.getActivity(this,0 /* request code */, intent, PendingIntent.FLAG_UPDATE_CURRENT);

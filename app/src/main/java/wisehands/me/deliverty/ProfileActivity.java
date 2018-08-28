@@ -34,7 +34,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private static final String TAG = "STEPS";
 
-    public static final String API_HOST = "http://192.168.1.2:8080";
+    public static final String API_HOST = "http://192.168.0.13:8080";
     private static String firebaseToken;
 
     private TextView testtest, testtest2, gpsstatus, mynetstatus, mylocation;
@@ -184,7 +184,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             Log.i(TAG, "you are ready to work " + true);
             boolean isactive = true;
             String urlPath = "isactivecourier";
-            String params = String.format("isactive=%s", isactive);
+            String params = String.format("jwttoken=%s&isactive=%s", jwttoken, isactive);
             String strURL = String.format("%s/%s?%s", API_HOST, urlPath, params);
 
             RequestQueue queue = Volley.newRequestQueue(this);
@@ -209,8 +209,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         }
         else { boolean isactive = false;
             Log.i(TAG, "RESPONSE: you are not ready to work " + false);
-            String urlPath = "finishtheorder";
-            String params = String.format("isactive=%s", isactive);
+            String urlPath = "isactivecourier";
+            String params = String.format("jwttoken=%s&isactive=%s", jwttoken, isactive);
             String strURL = String.format("%s/%s?%s", API_HOST, urlPath, params);
 
             RequestQueue queue = Volley.newRequestQueue(this);
