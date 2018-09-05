@@ -34,7 +34,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private static final String TAG = "STEPS";
 
-    public static final String API_HOST = "http://192.168.0.13:8080";
+    public static final String API_HOST = "http://192.168.1.88:8080";
     private static String firebaseToken;
 
     private TextView testtest, testtest2, gpsstatus, mynetstatus, mylocation;
@@ -207,7 +207,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             queue.add(postRequest);
             switchButton.setChecked(true);
         }
-        else { boolean isactive = false;
+        else {
+            boolean isactive = false;
             Log.i(TAG, "RESPONSE: you are not ready to work " + false);
             String urlPath = "isactivecourier";
             String params = String.format("jwttoken=%s&isactive=%s", jwttoken, isactive);
@@ -231,7 +232,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     }
             );
             queue.add(postRequest);
-
         }
     }
 

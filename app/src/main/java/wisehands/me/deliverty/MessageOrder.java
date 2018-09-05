@@ -15,6 +15,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import static wisehands.me.deliverty.ProfileActivity.API_HOST;
+import static wisehands.me.deliverty.ProfileActivity.jwttoken;
 
 public class MessageOrder extends AppCompatActivity implements View.OnClickListener {
 
@@ -32,6 +33,7 @@ public class MessageOrder extends AppCompatActivity implements View.OnClickListe
 
         findViewById(R.id.bn_accept).setOnClickListener(this);
         findViewById(R.id.bn_cancel).setOnClickListener(this);
+        findViewById(R.id.bn_finish).setOnClickListener(this);
 
         handleIntent(getIntent());
 
@@ -66,22 +68,54 @@ public class MessageOrder extends AppCompatActivity implements View.OnClickListe
             case R.id.bn_accept:
                 startService(new Intent(this, ServiceGPS.class));
                 acceptOrder();
+                isactivecourier(false);
                 break;
             case R.id.bn_cancel:
                 order.setText("Please wait for next order!");
                 address.setText("Please wait!");
-                cancelOrder();
                 startActivity(new Intent(this, ProfileActivity.class));
+                break;
+            case R.id.bn_finish:
+                order.setText("Please wait for next order!");
+                address.setText("Please wait for next order!");
+                finishOrder();
+                isactivecourier(true);
+                stopService(new Intent(this, ServiceGPS.class));
                 break;
         }
 
     }
 
+    private void isactivecourier(boolean isactive) {
+        Log.i(TAG, "RESPONSE: you are not ready to work " + false);
+        String urlPath = "isactivecourier";
+        String params = String.format("jwttoken=%s&isactive=%s", jwttoken, isactive);
+        String strURL = String.format("%s/%s?%s", API_HOST, urlPath, params);
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest postRequest = new StringRequest(Request.Method.POST, strURL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        Log.i(TAG, "RESPONSE: you are not ready to work " + response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // error
+                        Log.i(TAG, "FAILRequest: you aren't ready to work");
+                    }
+                }
+        );
+        queue.add(postRequest);
+    }
 
     private void acceptOrder() {
-        boolean isactive = true;
+        boolean inProgress = true;
         String urlPath = "readytowork";
-        String params = String.format("isactive=%s", isactive);
+        String params = String.format("jwttoken=%s&inProgress=%s", jwttoken, inProgress);
         String strURL = String.format("%s/%s?%s", API_HOST, urlPath, params);
 
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -104,11 +138,11 @@ public class MessageOrder extends AppCompatActivity implements View.OnClickListe
         queue.add(postRequest);
     }
 
-    private void cancelOrder() {
+    private void finishOrder() {
         stopService(new Intent(this, ServiceGPS.class));
-        boolean isactive = false;
-        String urlPath = "notreadytowork";
-        String params = String.format("isactive=%s", isactive);
+        boolean inProgress = false;
+        String urlPath = "readytowork";
+        String params = String.format("jwttoken=%s&inProgress=%s", jwttoken, inProgress);
         String strURL = String.format("%s/%s?%s", API_HOST, urlPath, params);
 
         RequestQueue queue = Volley.newRequestQueue(this);

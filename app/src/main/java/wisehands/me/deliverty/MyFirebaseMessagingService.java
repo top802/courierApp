@@ -8,8 +8,7 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -21,6 +20,8 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.Map;
+
+import static wisehands.me.deliverty.R.drawable.ic_notification;
 
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
@@ -83,8 +84,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         PendingIntent resultPendingIntent =
                 stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.main_logo, options);
+//        BitmapFactory.Options options = new BitmapFactory.Options();
+//        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.iconblack, options);
+
+        Resources resources = getResources();
+        int resourceId = resources.getIdentifier("ic_notification", "drawable", this.getPackageName());
 
         Uri soundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
@@ -92,8 +96,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         notificationBuilder.setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setWhen(System.currentTimeMillis())
-                .setLargeIcon(bitmap)
-                .setSmallIcon(R.drawable.main_logo_black)
+//                .setLargeIcon(resourceId)
+                .setSmallIcon(ic_notification)
                 .setSound(soundUri)
                 .setVibrate(pattern)
                 .setContentTitle(title)
