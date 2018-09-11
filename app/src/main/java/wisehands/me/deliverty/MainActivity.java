@@ -44,13 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        findViewById(R.id.goprofile).setOnClickListener(this);
         findViewById(R.id.bn_login).setOnClickListener(this);
-
-
-        //first we intialized the FirebaseAuth object
-        mAuth = FirebaseAuth.getInstance();
-
         //Then we need a GoogleSignInOptions object
         //And we need to build it as below
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -60,19 +54,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //Then we will get the GoogleSignInClient object from GoogleSignIn class
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
+//      first we intialized the Firebase  Auth object
+        mAuth = FirebaseAuth.getInstance();
         //Now we will attach a click listener to the sign_in_button
         //and inside onClick() method we are calling the signIn() method that will open
         //google sign in intent
-        getProfile();
     }
 
-    private void getProfile() {
-        if (mAuth.getCurrentUser() != null) {
-            finish();
-            startActivity(new Intent(this, ProfileActivity.class));
-        }
-    }
 
     @Override
     public void onClick(View view) {
@@ -80,10 +68,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.bn_login:
                 signIn();
                 break;
-            case R.id.goprofile:
-                startActivity(new Intent(this, ProfileActivity.class));
-                break;
+
         }
+    }
+
+    //this method is called on click
+    private void signIn() {
+        //getting the google signin intent
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        //starting the activity for result
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     @Override
@@ -93,10 +87,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //if the user is already signed in
         //we will close this activity
         //and take the user to profile activity
-//        if (mAuth.getCurrentUser() != null) {
-//            finish();
-//
-//        }
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        updateUI(currentUser);
+
+
+    }
+
+    private void updateUI(FirebaseUser user) {
+        if (user != null) {
+            finish();
+            startActivity(new Intent(this, ProfileActivity.class));
+        } else {
+            Toast.makeText(MainActivity.this, "please sign in", Toast.LENGTH_SHORT).show();
+
+        }
     }
 
 
@@ -126,7 +130,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //getting the auth credential
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-
         //Now using firebase we are signing in the user here
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -135,14 +138,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if (task.isSuccessful()) {
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-
+                            updateUI(user);
                             Toast.makeText(MainActivity.this, "User Signed In", Toast.LENGTH_SHORT).show();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(MainActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-
+                            updateUI(null);
                         }
 
 
@@ -150,13 +153,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 });
     }
 
-
-    //this method is called on click
-    private void signIn() {
-        //getting the google signin intent
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-
-        //starting the activity for result
-        startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
 }

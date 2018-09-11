@@ -170,8 +170,6 @@ public class ServiceGPS extends Service {
 
     }
 
-
-
     @Override
     public void onDestroy()
     {

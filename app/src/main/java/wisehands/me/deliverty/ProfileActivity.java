@@ -37,8 +37,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     public static final String API_HOST = "http://192.168.1.88:8080";
     private static String firebaseToken;
 
-    private TextView testtest, testtest2, gpsstatus, mynetstatus, mylocation;
-    private TextView txtName, txtEmail,vToken;
+    private TextView  gpsstatus, mynetstatus;
+    private TextView txtName, txtEmail;
     private Switch switchButton;
 
     private LocationManager locationManager;
@@ -54,12 +54,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-//        startService(new Intent(this, MyFirebaseMessagingService.class));
 
-//        testtest = (TextView) findViewById(R.id.url);
-//        testtest2 = (TextView) findViewById(R.id.url2);
-//        mylocation = (TextView) findViewById(R.id.mylocation);
-//        vToken = (TextView) findViewById(R.id.vToken);
         mynetstatus = (TextView) findViewById(R.id.netstatus);
         gpsstatus = (TextView) findViewById(R.id.gpsstatus);
         txtName = (TextView) findViewById(R.id.txtName);
@@ -78,10 +73,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         txtEmail.setText(user.getEmail());
 
         switchButton.setChecked(false);
-     //   onSwitchClick(switchButton.isChecked(false));
-
-//      create Token, JWT
-//      startService(new Intent(context, ServiceGPS.class));
 
         FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
         Log.i(TAG, "1 step - get IdToken");
@@ -94,7 +85,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                             context.firebaseToken = fbToken;
                             Log.i(TAG, "1/1 step - send IdToken");
 
-//                            vToken.setText("firebaseToken received");
 //                            send Token and create Volley POST
                             String urlPath = "authenticate";
                             String params = String.format("token=%s", fbToken);
@@ -135,9 +125,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         }
                     }
                 });
-
-
-
     }
 
     public void onJWTTokenReceived(){
@@ -335,9 +322,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         }
                     }
                 });
-
-
-
     }
 
     @SuppressLint("DefaultLocale")
@@ -373,8 +357,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         mynetstatus.setText("NET enabled: "
                 + locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER));
     }
-
-
 
 }
 

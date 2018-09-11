@@ -38,7 +38,13 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ProfileActivity" />
+        <activity
+            android:name=".ProfileActivity" >
+            <intent-filter>
+                <action android:name=".ProfileActivity" />
+            </intent-filter>
+
+        </activity>
 
         <activity
             android:name=".MessageOrder">
@@ -67,7 +73,6 @@
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
-
 
         <!-- Service GPS -->
         <service

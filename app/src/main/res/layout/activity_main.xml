@@ -6,8 +6,6 @@
     android:layout_height="match_parent"
     tools:context="wisehands.me.deliverty.MainActivity">
 
-
-
     <Button
         android:id="@+id/bn_login"
         android:layout_width="wrap_content"
@@ -19,29 +17,5 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/goprofile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="356dp"
-        android:text="profile"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.462"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <!--
-     <Button
-          android:id="@+id/bn_profile"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="32dp"
-          android:text="Profile"
-          app:layout_constraintRight_toRightOf="parent"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/bn_login" />
-    -->
-
 
 </android.support.constraint.ConstraintLayout>
