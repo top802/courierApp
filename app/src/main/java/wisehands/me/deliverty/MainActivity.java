@@ -64,15 +64,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Now we will attach a click listener to the sign_in_button
         //and inside onClick() method we are calling the signIn() method that will open
         //google sign in intent
-
+        getProfile();
     }
 
-//    private void getProfile() {
-//        if (mAuth.getCurrentUser() != null) {
-//            finish();
-//            startActivity(new Intent(this, ProfileActivity.class));
-//        }
-//    }
+    private void getProfile() {
+        if (mAuth.getCurrentUser() != null) {
+            finish();
+            startActivity(new Intent(this, ProfileActivity.class));
+        }
+    }
 
     @Override
     public void onClick(View view) {

@@ -112,12 +112,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 //                                            testtest.setText("jwtoken received and registration is complete");
                                             Toast.makeText(ProfileActivity.this, "registration is complete.",
                                                     Toast.LENGTH_SHORT).show();
-                                            Log.i(TAG, "2 step " + "registration is complete.");
+                                            Log.i(TAG, "2/1 step " + "registration is complete.");
                                             context.onJWTTokenReceived();
                                         }
                                     }, new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
+                                    Log.i(TAG, "2/2 step " + "registration is failed.");
                                     Toast.makeText(ProfileActivity.this, "registration is failed.",
                                             Toast.LENGTH_SHORT).show();
                                 }
