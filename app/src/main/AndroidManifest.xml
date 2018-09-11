@@ -42,6 +42,7 @@
             android:name=".ProfileActivity" >
             <intent-filter>
                 <action android:name=".ProfileActivity" />
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
 
         </activity>
@@ -56,13 +57,7 @@
 
 
 
-        <!-- idToken Firebase Service -->
-        <service android:name=".ProfileActivity">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-            </intent-filter>
-        </service>
-          <!-- Firebase MESSAGING_EVENT Service -->
+        <!-- Firebase MESSAGING_EVENT Service -->
         <service
             android:name=".MyFirebaseMessagingService"
             android:enabled="true"

@@ -29,14 +29,17 @@ import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
+
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "STEPS";
-
     public static final String API_HOST = "http://192.168.1.88:8080";
-    private static String firebaseToken;
-
     private TextView  gpsstatus, mynetstatus;
     private TextView txtName, txtEmail;
     private Switch switchButton;
@@ -45,6 +48,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private ProfileActivity context = this;
     public static String jwttoken;
+    public static String firebaseToken;
 
     private FirebaseAuth mAuth;
 
@@ -81,42 +85,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     public void onComplete(@NonNull Task<GetTokenResult> task) {
                         if (task.isSuccessful()) {
 
-                            final String fbToken = task.getResult().getToken();
-                            context.firebaseToken = fbToken;
+                            ProfileActivity.firebaseToken = task.getResult().getToken();
                             Log.i(TAG, "1/1 step - send IdToken");
-
-//                            send Token and create Volley POST
-                            String urlPath = "authenticate";
-                            String params = String.format("token=%s", fbToken);
-                            String url = String.format("%s/%s?%s", API_HOST, urlPath, params);
-
-                            Log.i(TAG, "1/2 step - get IdToken" + url);
-//                            Request a string response from the provided URL.
-
-                            RequestQueue queue = Volley.newRequestQueue(context);
-                            StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                                    new Response.Listener<String>() {
-                                        @Override
-                                        public void onResponse(String response) {
-                                            jwttoken = response;
-//                                            testtest.setText("jwtoken received and registration is complete");
-                                            Toast.makeText(ProfileActivity.this, "registration is complete.",
-                                                    Toast.LENGTH_SHORT).show();
-                                            Log.i(TAG, "2/1 step " + "registration is complete.");
-                                            context.onJWTTokenReceived();
-                                        }
-                                    }, new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                    Log.i(TAG, "2/2 step " + "registration is failed.");
-                                    Toast.makeText(ProfileActivity.this, "registration is failed.",
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            });
-
-                            // Add the request to the RequestQueue.
-                            queue.add(stringRequest);
-
+                            authenticateUser();
                         } else {
                             Toast.makeText(ProfileActivity.this, "Token not generated.",
                                     Toast.LENGTH_SHORT).show();
@@ -125,6 +96,55 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         }
                     }
                 });
+    }
+
+    public void getResponse(int method, String url, JSONObject jsonValue, final VolleyCallback callback) {
+
+        RequestQueue queue = MySingleton.getInstance(this).getRequestQueue();
+
+        StringRequest strreq = new StringRequest(Request.Method.GET, url, new Response.Listener < String > () {
+
+            @Override
+            public void onResponse(String Response) {
+                callback.onSuccessResponse(Response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError e) {
+                e.printStackTrace();
+                Toast.makeText(ProfileActivity.this, e + "error", Toast.LENGTH_LONG).show();
+            }
+        })
+        {
+            // set headers
+            @Override
+            public Map< String, String > getHeaders() throws com.android.volley.AuthFailureError {
+                Map< String, String > params = new HashMap< String, String >();
+//                params.put("Authorization: Basic", TOKEN);
+                return params;
+            }
+        };
+        MySingleton.getInstance(this).addToRequestQueue(strreq);
+    }
+
+    public void authenticateUser() {
+        String urlPath = "authenticate";
+        String params = String.format("token=%s", firebaseToken);
+        String url = String.format("%s/%s?%s", API_HOST, urlPath, params);
+        Log.i(TAG, "1/2 step - get IdToken" + url);
+
+        getResponse(Request.Method.POST, url, null,
+                new VolleyCallback() {
+                    @Override
+                    public void onSuccessResponse(String result) {
+                        jwttoken = result;
+                        Toast.makeText(ProfileActivity.this, "authentication is complete.",
+                                Toast.LENGTH_SHORT).show();
+                        Log.i(TAG, "2/2 step " + "registration is complete.");
+                        context.onJWTTokenReceived();
+                    }
+                });
+
     }
 
     public void onJWTTokenReceived(){
