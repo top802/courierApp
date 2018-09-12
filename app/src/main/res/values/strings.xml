@@ -5,4 +5,9 @@
     <string name="provider_gps">GPS</string>
     <string name="provider_network">Network</string>
 
+    <!-- item's text on navigation button-->
+    <string name="exit">Exit</string>
+    <string name="profile">Profile</string>
+    <string name="message">Message</string>
+
 </resources>

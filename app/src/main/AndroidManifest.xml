@@ -6,10 +6,9 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-    <!--<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>-->
-    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>-->
-    <!--<uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"></uses-permission>-->
-
+    <!-- <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission> -->
+    <!-- <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission> -->
+    <!-- <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"></uses-permission> -->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_notification"
@@ -18,15 +17,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-
-        <!--
-             The API key for Google Maps-based APIs.
-        -->
+        <!--              The API key for Google Maps-based APIs. -->
 
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
@@ -34,35 +29,32 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".ProfileActivity" >
+        <activity android:name=".ProfileActivity">
             <intent-filter>
                 <action android:name=".ProfileActivity" />
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
+        </activity>
+        <activity android:name=".MessageActivity">
 
         </activity>
-
-        <activity
-            android:name=".MessageOrder">
+        <activity android:name=".MessageOrder">
             <intent-filter>
                 <action android:name=".MessageOrder" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
-
 
         <!-- Firebase MESSAGING_EVENT Service -->
         <service
             android:name=".MyFirebaseMessagingService"
             android:enabled="true"
             android:exported="true">
-
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
@@ -75,6 +67,7 @@
             android:enabled="true"
             android:exported="true" />
 
+        <activity android:name=".MessageActivity"></activity>
     </application>
 
 </manifest>

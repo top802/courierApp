@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <item
+        android:id="@+id/item_main"
+        android:enabled="true"
+        android:icon="@drawable/ic_enter"
+        android:title="@string/exit"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/item_profile"
+        android:enabled="true"
+        android:icon="@drawable/ic_profiles"
+        android:title="@string/profile"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/item_message"
+        android:enabled="true"
+        android:icon="@drawable/ic_message"
+        android:title="@string/message"
+        app:showAsAction="ifRoom" />
+
+</menu>

@@ -2,14 +2,18 @@ package wisehands.me.deliverty;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -96,6 +100,55 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         }
                     }
                 });
+
+        BottomNavigationView bottomNavigationView = (BottomNavigationView)
+                findViewById(R.id.bn_navi_view);
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.item_main:
+                                exitApp();
+                                break;
+                            case R.id.item_profile:
+                                break;
+                            case R.id.item_message:
+                                finish();
+                                startActivity(new Intent(context, MessageActivity.class));
+                                break;
+                        }
+                        return true;
+                    }
+                });
+
+    }
+
+    public void exitApp(){
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
+        builder.setTitle("Exit");
+        builder.setMessage("Do you want to exit ??");
+        builder.setPositiveButton("Yes. Exit now!", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i){
+
+                System.exit(0);
+
+           }
+         });
+	    builder.setNegativeButton("Not now", new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int i){
+
+        dialogInterface.dismiss();
+         }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
     }
 
     public void getResponse(int method, String url, JSONObject jsonValue, final VolleyCallback callback) {

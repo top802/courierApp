@@ -59,7 +59,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Now we will attach a click listener to the sign_in_button
         //and inside onClick() method we are calling the signIn() method that will open
         //google sign in intent
+
+
     }
+
+
+
 
 
     @Override
@@ -89,8 +94,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //and take the user to profile activity
         FirebaseUser currentUser = mAuth.getCurrentUser();
         updateUI(currentUser);
-
-
     }
 
     private void updateUI(FirebaseUser user) {
@@ -99,7 +102,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startActivity(new Intent(this, ProfileActivity.class));
         } else {
             Toast.makeText(MainActivity.this, "please sign in", Toast.LENGTH_SHORT).show();
-
         }
     }
 
