@@ -35,15 +35,29 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONObject;
 
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
 
+
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.X509TrustManager;
+import java.security.cert.X509Certificate;
+import java.util.ResourceBundle;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "STEPS";
-    public static final String API_HOST = "http://192.168.1.88:8080";
+    public static final String API_HOST = "https://192.168.1.78:8902";
     private TextView  gpsstatus, mynetstatus;
     private TextView txtName, txtEmail;
     private Switch switchButton;
@@ -81,6 +95,44 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         txtEmail.setText(user.getEmail());
 
         switchButton.setChecked(false);
+
+
+
+
+//        TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+//            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+//                return null;
+//            }
+//            public void checkClientTrusted(X509Certificate[] certs, String authType) {
+//            }
+//            public void checkServerTrusted(X509Certificate[] certs, String authType) {
+//            }
+//        } };
+//        SSLContext sc = null;
+//        try {
+//            sc = SSLContext.getInstance("TLSv1.2");
+//        } catch (NoSuchAlgorithmException e) {
+//            e.printStackTrace();
+//        }
+//        try {
+//            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+//        } catch (KeyManagementException e) {
+//            e.printStackTrace();
+//        }
+//        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+//        // Create all-trusting host name verifier
+//        HostnameVerifier allHostsValid = new HostnameVerifier() {
+//            public boolean verify(String hostname, SSLSession session) {
+//                return true;
+//            }
+//        };
+//        // Install the all-trusting host verifier
+//        HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+
+
+
+
+
 
         FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
         Log.i(TAG, "1 step - get IdToken");
@@ -139,11 +191,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
            }
          });
 	    builder.setNegativeButton("Not now", new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialogInterface, int i){
-
-        dialogInterface.dismiss();
-         }
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
         });
 
         AlertDialog dialog = builder.create();
@@ -184,7 +235,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         String urlPath = "authenticate";
         String params = String.format("token=%s", firebaseToken);
         String url = String.format("%s/%s?%s", API_HOST, urlPath, params);
-        Log.i(TAG, "1/2 step - get IdToken" + url);
+        Log.i(TAG, "1/2 step - get IdToken => " + url);
 
         getResponse(Request.Method.POST, url, null,
                 new VolleyCallback() {

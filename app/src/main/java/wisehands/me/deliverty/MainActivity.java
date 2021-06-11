@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+
 // Importing Google GMS Auth API Libraries.
 
 
@@ -69,12 +70,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.bn_login:
-                signIn();
-                break;
-
-        }
+        Log.d(TAG, "firebaseAuthWithGoogle:" + view.getId());
+        if (view.getId() == R.id.bn_login) signIn();
     }
 
     //this method is called on click
